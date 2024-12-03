@@ -10,6 +10,7 @@ from config import TOKEN
 from  telebot import types
 import os
 import logging
+from email_utils import send_email
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -146,6 +147,10 @@ def register_handlers():
         file_name = f"{user_name}_{user_id}.docx"  # или .docx
         file_path = os.path.join('srs_completed', file_name)
 
+        subject = "Новый заказ: CРС"
+        body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
+        send_email(subject, body)
+
         try:
             # Проверка существования директории
             if os.path.exists(file_path):
@@ -238,6 +243,11 @@ def register_handlers():
         user_id = message.from_user.id
         file_name = f"{user_name}_{user_id}_presentation.pptx"  # Убедитесь, что это имя вашего файла PowerPoint
         file_path = os.path.join('presentation_completed', file_name)
+
+        #Отправка уведомлений на почту
+        subject = "Новый заказ: Презентация"
+        body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
+        send_email(subject, body)
 
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
