@@ -121,6 +121,11 @@ def register_handlers():
             print(f'Пользователь {user_name}_{user_id} отправил  вам заказ \n')
             print(f'Файл с заданиями находиться в srs_data/{file_user}')
             #bot.reply_to(message, "Спасибо! Ваш СРС сохранен.")
+
+            subject = "Новый заказ: CРС"
+            body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
+            send_email(subject, body)
+
         elif message.text.lower() == 'нет':
             bot.reply_to(message, "Отмена отправки. Вы можете ввести данные заново.")
             start_srs(message)  # Перезапускаем процесс ввода
@@ -147,9 +152,6 @@ def register_handlers():
         file_name = f"{user_name}_{user_id}.docx"  # или .docx
         file_path = os.path.join('srs_completed', file_name)
 
-        subject = "Новый заказ: CРС"
-        body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
-        send_email(subject, body)
 
         try:
             # Проверка существования директории
@@ -222,8 +224,15 @@ def register_handlers():
             topic = user_data[user_id]['topic']
             description = user_data[user_id]['description']
 
+
             # Сохраняем данные в текстовый файл
             save_presentation_to_txt(user_name, user_id, topic, description)
+
+            # Отправка уведомлений на почту
+            subject = "Новый заказ: Презентация"
+            body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
+            print(f"Файл отправлен на адрес пользователя {user_name}_{user_id}")
+            send_email(subject, body)
 
             bot.reply_to(message, "Спасибо! Ваша презентация успешно сохранена.\n"
                                   "Ожидайте получения презентацию.\n"
@@ -247,16 +256,16 @@ def register_handlers():
         #Отправка уведомлений на почту
         subject = "Новый заказ: Презентация"
         body = f"Пользователь отправил задание:\n\nИмя:{user_name}_{user_id}"
-        send_email(subject, body)
 
-        if os.path.exists(file_path):
-            with open(file_path, 'rb') as file:
-                bot.send_document(message.chat.id, file)
-                bot.reply_to(message, "Вот ваша готовая презентация!")
-        else:
-            bot.reply_to(message, "Презентация не найдена. Убедитесь, что она сохранена.")
-
-
+        try:
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as file:
+                    bot.send_document(message.chat.id, file)
+                    bot.reply_to(message, "Вот ваша готовая презентация!")
+            else:
+                bot.reply_to(message, "Презентация не найдена. Убедитесь, что она сохранена.")
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
 
 
     # Текст

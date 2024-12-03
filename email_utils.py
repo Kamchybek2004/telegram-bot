@@ -1,23 +1,25 @@
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from config import EMAIL_HOST, EMAIL_PORT, EMAIL_ADDRESS, EMAIL_PASSWORD
+from email.mime.text import MIMEText
+
+EMAIL_ADDRESS = "kamchy2501@gmail.com"
+EMAIL_PASSWORD = "yftp vayz whmz bijs"
 
 def send_email(subject, body):
+    msg = MIMEMultipart()
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = EMAIL_ADDRESS
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
     try:
-        message = MIMEMultipart()
-        message["From"] = EMAIL_ADDRESS
-        message["To"] = EMAIL_ADDRESS
-        message["Subject"] = subject
-
-        message.attach(MIMEText(body, "plain"))
-
-        with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
-            server.starttls()
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(message)
-        print("Уведомление отправлено на почту.")
+            server.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, msg.as_string())
+        print("Сообщение на почту отправлен успешно!")
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"Ошибка аутентификации: {e}")
     except Exception as e:
-        print(f"Ошибка при отправке письма: {e}")
+        print(f"Ошибка в: {e}")
 
 

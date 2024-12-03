@@ -8,6 +8,6 @@ PRESENTATION_COMPLETED_FOLDER = 'presentation_completed'
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_ADDRESS = "kamchy2501@gmail.com"
-EMAIL_PASSWORD = "medina20042501@#$"
+EMAIL_PASSWORD = "yftp vayz whmz bijs"
 
 
